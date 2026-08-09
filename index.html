@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two Orbits, One Gravity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============================================================
+     CUSTOMIZE HERE — search these labels to personalize the site
+     1) NAMES        — search "Prathmesh" and "Rituja"
+     2) DATE/PLACE   — search "the beginning"
+     3) TIMELINE     — search "TIMELINE DATA"
+     4) PHOTOS       — search "PHOTO DATA" (swap div placeholders for <img>)
+     5) CLOSING NOTE — search "CLOSING NOTE"
+     ============================================================ */
+
+    :root {
+      --midnight: #1a0f1f;
+      --plum: #3a1f42;
+      --plum-soft: #4d2c5c;
+      --gold: #c99a5b;
+      --blush: #d99a8f;
+      --rose: #c9536e;
+      --rose-deep: #7a2740;
+      --rose-glow: rgba(201, 83, 110, 0.35);
+      --cream: #f3ece1;
+      --ink: #efe6f5;
+      --line: rgba(243, 236, 225, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--midnight);
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--gold);
+      color: var(--midnight);
+    }
+
+    .display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ---------- HERO ---------- */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 30%, var(--rose-deep) 0%, var(--plum) 45%, var(--midnight) 75%);
+    }
+
+    /* ---------- AMBIENT FLOATING HEARTS (whole page) ---------- */
+    #floating-hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .fheart {
+      position: absolute;
+      bottom: -40px;
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      animation: floatUp linear infinite;
+    }
+
+    .fheart::before,
+    .fheart::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 22px;
+      background: var(--rose);
+      border-radius: 14px 14px 0 0;
+      opacity: 0.35;
+    }
+
+    .fheart::before {
+      left: 7px;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+
+    .fheart::after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      8% {
+        opacity: 0.5;
+      }
+
+      90% {
+        opacity: 0.3;
+      }
+
+      100% {
+        transform: translateY(-110vh) rotate(25deg);
+        opacity: 0;
+      }
+    }
+
+    #orbit-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      pointer-events: none;
+      padding: 0 24px;
+    }
+
+    .hero-eyebrow {
+      font-size: 12px;
+      color: var(--gold);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.3s forwards;
+    }
+
+    .hero-names {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(48px, 11vw, 128px);
+      line-height: 1;
+      color: var(--cream);
+      letter-spacing: 0.01em;
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.6s forwards;
+    }
+
+    .hero-names .amp {
+      color: var(--blush);
+      font-size: 0.65em;
+      padding: 0 0.15em;
+    }
+
+    .hero-sub {
+      margin-top: 22px;
+      font-size: 15px;
+      color: var(--ink);
+      opacity: 0;
+      letter-spacing: 0.04em;
+      animation: fadeUp 1.2s ease 0.9s forwards;
+    }
+
+    .hero-sub span {
+      color: var(--gold);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      font-size: 11px;
+      color: var(--ink);
+      opacity: 0.55;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scroll-cue .stem {
+      width: 1px;
+      height: 34px;
+      background: linear-gradient(var(--gold), transparent);
+      animation: stemPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes stemPulse {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* ---------- SECTION SHELL ---------- */
+    section.block {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 140px 28px;
+      position: relative;
+    }
+
+    section.block::before {
+      content: "";
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 280px;
+      background: radial-gradient(ellipse, var(--rose-glow), transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(10px);
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: var(--rose);
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(30px, 5vw, 46px);
+      color: var(--cream);
+      max-width: 640px;
+      line-height: 1.15;
+    }
+
+    /* ---------- STORY / TIMELINE ---------- */
+    #story {
+      border-top: 1px solid var(--line);
+    }
+
+    .timeline {
+      margin-top: 70px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 86px;
+      top: 6px;
+      bottom: 6px;
+      width: 1px;
+      background: linear-gradient(var(--line), var(--rose) 50%, var(--line));
+    }
+
+    .entry {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 36px;
+      padding: 30px 0;
+      position: relative;
+    }
+
+    .entry .date {
+      font-size: 12px;
+      color: var(--gold);
+      padding-top: 4px;
+      text-align: right;
+      padding-right: 24px;
+    }
+
+    .entry .dot {
+      position: absolute;
+      left: 82px;
+      top: 8px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--rose);
+      box-shadow: 0 0 0 4px var(--rose-glow);
+      animation: heartbeat 1.8s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.35);
+      }
+    }
+
+    .entry h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-style: italic;
+      font-size: 26px;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+
+    .entry p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(239, 230, 245, 0.75);
+      max-width: 520px;
+    }
+
+    /* ---------- GALLERY ---------- */
+    #gallery {
+      border-top: 1px solid var(--line);
+    }
+
+    .grid {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      perspective: 1200px;
+    }
+
+    .photo {
+      position: relative;
+      aspect-ratio: 4/5;
+      border-radius: 4px;
+      overflow: hidden;
+      background:
+        linear-gradient(155deg, var(--plum-soft), var(--midnight));
+      border: 1px solid var(--line);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+      cursor: zoom-in;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .photo:nth-child(3n+2) {
+      margin-top: 34px;
+    }
+
+    .photo img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.92;
+    }
+
+    .photo .placeholder-label {
+      position: relative;
+      z-index: 1;
+      padding: 16px;
+      font-size: 11px;
+      color: rgba(243, 236, 225, 0.55);
+    }
+
+    .photo .caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 18px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--cream);
+      background: linear-gradient(to top, rgba(21, 16, 41, 0.85), transparent);
+      z-index: 2;
+    }
+
+    .photo::after {
+      content: "♥";
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      color: var(--rose);
+      font-size: 16px;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 3;
+      text-shadow: 0 0 12px var(--rose-glow);
+    }
+
+    .photo:hover {
+      box-shadow: 0 30px 70px -20px var(--rose-glow), 0 0 0 1px var(--rose);
+      border-color: var(--rose);
+    }
+
+    .photo:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 5, 12, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .lightbox.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      width: min(92vw, 900px);
+      transform: translateY(10px) scale(0.98);
+      transition: transform 0.25s ease;
+    }
+
+    .lightbox.open .lightbox-inner {
+      transform: translateY(0) scale(1);
+    }
+
+    .lightbox img {
+      width: 100%;
+      max-height: 82vh;
+      object-fit: contain;
+      border-radius: 16px;
+      border: 1px solid rgba(243, 236, 225, 0.2);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    .lightbox-caption {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 20px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      display: inline-block;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      backdrop-filter: blur(4px);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--cream);
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-nav.prev {
+      left: -14px;
+    }
+
+    .lightbox-nav.next {
+      right: -14px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--cream);
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ---------- CLOSING ---------- */
+    #closing {
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+
+    #closing .note {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(24px, 4vw, 36px);
+      line-height: 1.5;
+      color: var(--cream);
+      max-width: 620px;
+      margin: 40px auto 0;
+    }
+
+    #closing .signoff {
+      margin-top: 36px;
+      font-size: 13px;
+      color: var(--rose);
+    }
+
+    footer {
+      padding: 50px 28px 70px;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(239, 230, 245, 0.35);
+    }
+
+    @media (max-width:720px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .photo:nth-child(3n+2) {
+        margin-top: 0;
+      }
+
+      .photo:nth-child(2n) {
+        margin-top: 34px;
+      }
+
+      .timeline::before {
+        left: 60px;
+      }
+
+      .entry {
+        grid-template-columns: 60px 1fr;
+        gap: 20px;
+      }
+
+      .entry .dot {
+        left: 56px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .hero-eyebrow,
+      .hero-names,
+      .hero-sub {
+        animation: none;
+        opacity: 1;
+      }
+
+      .stem {
+        animation: none;
+      }
+
+      .fheart {
+        animation: none;
+        opacity: 0;
+      }
+
+      .entry .dot {
+        animation: none;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="floating-hearts"></div>
+
+  <section id="hero">
+    <canvas id="orbit-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-eyebrow mono">est. 2022</div>
+      <h1 class="hero-names">Prathmesh<span class="amp">&amp;</span>Rituja</h1>
+      <p class="hero-sub">two bodies, one gravity — <span>orbiting since day one</span></p>
+    </div>
+    <div class="scroll-cue">
+      <span class="mono">scroll</span>
+      <div class="stem"></div>
+    </div>
+  </section>
+
+  <section id="story" class="block">
+    <div class="section-label mono">the story</div>
+    <h2 class="section-title">Every orbit has a beginning.</h2>
+
+    <div class="timeline">
+      <!-- TIMELINE DATA: duplicate/edit .entry blocks -->
+      <div class="entry">
+        <div class="dot"></div>
+        <div class="date mono">2022</div>
+        <div>
+          <h3>Where it started</h3>
+          <p>Replace this with how you two met in 2022 — the place, the small detail neither of you forgot.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="dot"></div>
+        <div class="date mono">2023</div>
+        <div>
+          <h3>A turning point</h3>
+          <p>A trip, a decision, a first "I love you" — whatever moment in 2023 changed the trajectory.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="dot"></div>
+        <div class="date mono">2024</div>
+        <div>
+          <h3>Building something</h3>
+          <p>Moving in together, a shared project, a promise made — the chapter where it got real.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="dot"></div>
+        <div class="date mono">2025</div>
+        <div>
+          <h3>A milestone</h3>
+          <p>An anniversary, a proposal, a big move — the moment that marked how far you'd come.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="dot"></div>
+        <div class="date mono">2026</div>
+        <div>
+          <h3>Still orbiting</h3>
+          <p>Where you are now, and why today is worth marking.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="block">
+    <div class="section-label mono">the moments</div>
+    <h2 class="section-title">A gallery, tilted toward you.</h2>
+
+    <div class="grid" id="photo-grid">
+      <div class="photo">
+        <img src="images/Image.jpg01.jpeg" alt="First photo">
+        <span class="caption">a first, somewhere</span>
+      </div>
+      <div class="photo">
+        <img src="images/Image.jpg02.jpeg" alt="Second photo">
+        <span class="caption">an ordinary Tuesday</span>
+      </div>
+      <div class="photo">
+        <img src="images/Image.jpg03.jpeg" alt="Third photo">
+        <span class="caption">that trip</span>
+      </div>
+      <div class="photo">
+        <img src="images/Image.jpg04.jpeg" alt="Fourth photo">
+        <span class="caption">the quiet mornings</span>
+      </div>
+      <div class="photo">
+        <img src="images/Image.jpg05.jpeg" alt="Fifth photo">
+        <span class="caption">celebrating</span>
+      </div>
+      <div class="photo">
+        <img src="images/Image.jpg06.jpeg" alt="Sixth photo">
+        <span class="caption">just us</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="closing" class="block">
+    <div class="section-label mono">for you</div>
+    <!-- CLOSING NOTE: your own words -->
+    <p class="note">"Out of everyone, everywhere — I still choose the orbit that brings me back to you."</p>
+    <p class="signoff mono">— Prathmesh, always</p>
+  </section>
+
+  <footer>made with orbit and intention</footer>
+
+  <div id="photo-lightbox" class="lightbox" aria-hidden="true">
+    <div class="lightbox-inner">
+      <button class="lightbox-nav prev" type="button" aria-label="Previous image">‹</button>
+      <button class="lightbox-nav next" type="button" aria-label="Next image">›</button>
+      <button class="lightbox-close" type="button" aria-label="Close preview">×</button>
+      <img id="lightbox-image" src="" alt="">
+      <div id="lightbox-caption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // ---------- HERO: binary star orbit scene ----------
+    (function () {
+      const canvas = document.getElementById('orbit-canvas');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 14);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // starfield background
+      const starGeo = new THREE.BufferGeometry();
+      const starCount = 900;
+      const starPos = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i++) {
+        starPos[i * 3] = (Math.random() - 0.5) * 60;
+        starPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+        starPos[i * 3 + 2] = (Math.random() - 0.5) * 40 - 5;
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      const starMat = new THREE.PointsMaterial({ color: 0xf3ece1, size: 0.045, transparent: true, opacity: 0.55 });
+      const stars = new THREE.Points(starGeo, starMat);
+      scene.add(stars);
+
+      // two orbiting bodies (the couple) around a shared center
+      const goldMat = new THREE.MeshBasicMaterial({ color: 0xc99a5b });
+      const blushMat = new THREE.MeshBasicMaterial({ color: 0xd99a8f });
+
+      const bodyA = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 32), goldMat);
+      const bodyB = new THREE.Mesh(new THREE.SphereGeometry(0.34, 32, 32), blushMat);
+      scene.add(bodyA, bodyB);
+
+      // central 3D heart — the thing they orbit around
+      function heartShape() {
+        const shape = new THREE.Shape();
+        const x = 0, y = 0;
+        shape.moveTo(x, y);
+        shape.bezierCurveTo(x, y - 0.6, x - 1, y - 0.6, x - 1, y + 0.05);
+        shape.bezierCurveTo(x - 1, y + 0.6, x - 0.4, y + 0.9, x, y + 1.3);
+        shape.bezierCurveTo(x + 0.4, y + 0.9, x + 1, y + 0.6, x + 1, y + 0.05);
+        shape.bezierCurveTo(x + 1, y - 0.6, x, y - 0.6, x, y);
+        return shape;
+      }
+      const heartGeo = new THREE.ExtrudeGeometry(heartShape(), { depth: 0.35, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.06, bevelSegments: 3 });
+      heartGeo.center();
+      const heartMat = new THREE.MeshBasicMaterial({ color: 0xc9536e, transparent: true, opacity: 0.85 });
+      const heartMesh = new THREE.Mesh(heartGeo, heartMat);
+      heartMesh.scale.set(0.85, 0.85, 0.85);
+      heartMesh.rotation.z = Math.PI; // point downward, right-side up
+      scene.add(heartMesh);
+      const heartGlow = (function () {
+        const c = document.createElement('canvas');
+        c.width = c.height = 128;
+        const ctx = c.getContext('2d');
+        const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+        g.addColorStop(0, '#c9536eff');
+        g.addColorStop(1, '#c9536e00');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 128, 128);
+        const tex = new THREE.CanvasTexture(c);
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(4.2, 4.2, 1);
+        return sprite;
+      })();
+      scene.add(heartGlow);
+
+      // soft glow via sprite
+      function makeGlow(color, size) {
+        const c = document.createElement('canvas');
+        c.width = c.height = 128;
+        const ctx = c.getContext('2d');
+        const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+        g.addColorStop(0, color + 'ff');
+        g.addColorStop(1, color + '00');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 128, 128);
+        const tex = new THREE.CanvasTexture(c);
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(size, size, 1);
+        return sprite;
+      }
+      const glowA = makeGlow('#c99a5b', 3.2);
+      const glowB = makeGlow('#d99a8f', 2.6);
+      scene.add(glowA, glowB);
+
+      // orbit trail
+      const trailPoints = 140;
+      function makeTrail(color, opacity) {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(trailPoints * 3), 3));
+        const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+        return new THREE.Line(geo, mat);
+      }
+      const trailA = makeTrail(0xc99a5b, 0.25);
+      const trailB = makeTrail(0xd99a8f, 0.2);
+      scene.add(trailA, trailB);
+      const histA = [], histB = [];
+
+      let t = 0;
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5);
+        mouseY = (e.clientY / window.innerHeight - 0.5);
+      });
+
+      const rA = 3.6, rB = 2.4; // orbit radii, offset to feel like a real binary system
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.006;
+
+        const ax = Math.cos(t) * rA;
+        const az = Math.sin(t) * rA * 0.4;
+        const ay = Math.sin(t * 0.7) * 0.4;
+        const bx = Math.cos(t + Math.PI) * rB;
+        const bz = Math.sin(t + Math.PI) * rB * 0.4;
+        const by = Math.sin(t * 0.7 + Math.PI) * 0.4;
+
+        bodyA.position.set(ax, ay, az);
+        bodyB.position.set(bx, by, bz);
+        glowA.position.copy(bodyA.position);
+        glowB.position.copy(bodyB.position);
+
+        histA.push(bodyA.position.clone());
+        histB.push(bodyB.position.clone());
+        if (histA.length > trailPoints) histA.shift();
+        if (histB.length > trailPoints) histB.shift();
+        updateTrail(trailA, histA);
+        updateTrail(trailB, histB);
+
+        // heartbeat pulse + slow spin for the central heart
+        const beat = 1 + Math.sin(t * 3.2) * 0.05 + Math.max(0, Math.sin(t * 3.2)) * 0.05;
+        heartMesh.scale.set(0.85 * beat, 0.85 * beat, 0.85 * beat);
+        heartMesh.rotation.y += 0.004;
+        heartGlow.scale.set(4.2 * beat, 4.2 * beat, 1);
+
+        stars.rotation.y += 0.00012;
+
+        camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
+        camera.position.y += (-mouseY * 1.2 - camera.position.y) * 0.02;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+      function updateTrail(line, hist) {
+        const arr = line.geometry.attributes.position.array;
+        for (let i = 0; i < trailPoints; i++) {
+          const p = hist[i] || hist[0] || { x: 0, y: 0, z: 0 };
+          arr[i * 3] = p.x; arr[i * 3 + 1] = p.y; arr[i * 3 + 2] = p.z;
+        }
+        line.geometry.attributes.position.needsUpdate = true;
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    })();
+
+    // ---------- AMBIENT: floating hearts across the page ----------
+    (function () {
+      const container = document.getElementById('floating-hearts');
+      const count = 14;
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement('div');
+        h.className = 'fheart';
+        const left = Math.random() * 100;
+        const duration = 14 + Math.random() * 12;
+        const delay = Math.random() * 18;
+        const scale = 0.6 + Math.random() * 0.9;
+        h.style.left = left + 'vw';
+        h.style.animationDuration = duration + 's';
+        h.style.animationDelay = delay + 's';
+        h.style.transform = `scale(${scale})`;
+        container.appendChild(h);
+      }
+    })();
+
+    // ---------- GALLERY: 3D tilt on hover + lightbox preview ----------
+    (function () {
+      const photos = Array.from(document.querySelectorAll('.photo'));
+      const lightbox = document.getElementById('photo-lightbox');
+      const lightboxImage = document.getElementById('lightbox-image');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      const closeBtn = lightbox.querySelector('.lightbox-close');
+      const prevBtn = lightbox.querySelector('.lightbox-nav.prev');
+      const nextBtn = lightbox.querySelector('.lightbox-nav.next');
+      let activeIndex = 0;
+
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      };
+
+      const openLightbox = (index) => {
+        activeIndex = index;
+        const card = photos[index];
+        const img = card?.querySelector('img');
+        const caption = card?.querySelector('.caption');
+
+        if (!img) return;
+
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt || 'Gallery photo';
+        lightboxCaption.textContent = caption ? caption.textContent : '';
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const showPrev = () => {
+        const nextIndex = (activeIndex - 1 + photos.length) % photos.length;
+        openLightbox(nextIndex);
+      };
+
+      const showNext = () => {
+        const nextIndex = (activeIndex + 1) % photos.length;
+        openLightbox(nextIndex);
+      };
+
+      photos.forEach((card, index) => {
+        const img = card.querySelector('img');
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateZ(10px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'rotateY(0) rotateX(0) translateZ(0)';
+        });
+
+        card.addEventListener('click', () => {
+          openLightbox(index);
+        });
+      });
+
+      prevBtn.addEventListener('click', showPrev);
+      nextBtn.addEventListener('click', showNext);
+      closeBtn.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showPrev();
+        if (e.key === 'ArrowRight') showNext();
+      });
+    })();
+  </script>
+</body>
+
+</html>
